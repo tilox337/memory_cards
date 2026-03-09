@@ -4,8 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cards</title>
+    <style>
+      .createWindow {
+        text-align: center;
+        width: 40%;
+        background-color: green;
+        height: 10em;
+      }
+      #leftWindow {
+        display: flex;
+      }
+      #rightWindow {
+        display: flex;
+      }
+    </style>
   </head>
   <body>
+    <div style="display: flex; justify-content: space-around">
+      <input type="text" id="leftWindow" class="createWindow" />
+      <input id="rightWindow" class="createWindow" />
+    </div>
+    <div style="display: flex; justify-content: center; margin: 2em">
+      <button id="createCardBut">Create card</button>
+    </div>
+    <table></table>
     <script src="main.js"></script>
   </body>
 </html>
