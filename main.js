@@ -1,4 +1,6 @@
 let deck = [];
+let decks = [];
+let activeDeck = 0;
 const createCardBut = document.querySelector("#createCardBut");
 createCardBut.addEventListener("click", createCard);
 
@@ -72,4 +74,9 @@ function redactCard(cardToRedact) {
   document.querySelector("#rightWindow").value = cardToRedact.backSide;
   createCardBut.innerHTML = "Submit";
   deleteCard(cardToRedact);
+}
+
+function createDeck() {
+  let deck = [];
+  decks.push(deck);
 }
