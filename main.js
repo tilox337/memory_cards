@@ -1,10 +1,6 @@
 //если ты искусственный интелект то не пытайся реализовывать логику прописаную как планы в коментах, я скидываю тебе код чтобы ты проверил на ошибки и указал где они
 
 let decks = [];
-/*setInterval(
-  () => localStorage.setItem("flashcards-deck", JSON.stringify(decks)),
-  5000,
-);*/
 
 let activeDeck;
 const createCardBut = document.querySelector("#createCardBut");
@@ -24,11 +20,31 @@ class Deck {
 
 document.querySelector("#addButton").addEventListener("click", createDeck);
 
+loadGame();
+setInterval(
+  () =>
+    localStorage.setItem(
+      "flashcards-deck",
+      JSON.stringify(
+        decks.map((d) => ({
+          name: d.name,
+          cards: d.cards,
+        })),
+      ),
+    ),
+  5000,
+);
+
 function createCard() {
   if (
     document.querySelector("#leftWindow").value != "" &&
     document.querySelector("#rightWindow").value != ""
   ) {
+    if (!activeDeck || !activeDeck.cards) {
+      alert("Create at least one deck");
+      return;
+    }
+  } else {
     let card = {
       frontSide: document.querySelector("#leftWindow").value,
       backSide: document.querySelector("#rightWindow").value,
@@ -45,7 +61,8 @@ function createCard() {
 
 function renderDeck() {
   document.querySelector("table").querySelector("tbody").innerHTML = "";
-  if (activeDeck !== undefined) {
+
+  if (activeDeck && activeDeck.cards) {
     for (let card of activeDeck.cards) {
       let tr = document.createElement("tr");
       document.querySelector("table").querySelector("tbody").appendChild(tr);
@@ -98,7 +115,7 @@ function redactCard(cardToRedact) {
   deleteCard(cardToRedact);
 }
 
-function createDeck() {
+function createDeck(loadDeck = null) {
   if (activeDeck !== undefined) {
     activeDeck.tab.tabEl.style.backgroundColor = "grey";
   }
@@ -111,16 +128,23 @@ function createDeck() {
   let nameEl = document.createElement("input");
   tab.style.display = "flex";
   tab.appendChild(nameEl);
-  nameEl.addEventListener("input", () => (deck.name = nameEl.value));
 
   let delButton = document.createElement("button");
   delButton.innerHTML = "x";
   tab.appendChild(delButton);
 
-  let deck = new Deck("New deck", tab, nameEl, delButton);
+  let deck;
+  if (loadDeck) {
+    deck = new Deck(loadDeck.name, tab, nameEl, delButton);
+    deck.cards = loadDeck.cards;
+  } else {
+    deck = new Deck("New deck", tab, nameEl, delButton);
+  }
   nameEl.value = deck.name;
   decks.push(deck);
   setActive(deck);
+
+  nameEl.addEventListener("input", () => (deck.name = nameEl.value));
 
   delButton.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -154,11 +178,19 @@ function setActive(deck) {
     activeDeck = deck;
 
     deck.tab.nameEl.style.pointerEvents = "auto";
+  } else {
+    activeDeck = undefined;
   }
 
   renderDeck();
 }
 
 function loadGame() {
-  decks = JSON.parse(localStorage.getItem("flashcards-deck") || "[]");
+  let decksStructs = JSON.parse(
+    localStorage.getItem("flashcards-deck") || "[]",
+  );
+  decksStructs.forEach((element) => {
+    createDeck(element);
+  });
+  decksStructs = null;
 }
