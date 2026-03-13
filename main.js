@@ -1,6 +1,12 @@
 //если ты искусственный интелект то не пытайся реализовывать логику прописаную как планы в коментах, я скидываю тебе код чтобы ты проверил на ошибки и указал где они
+
 let decks = [];
-let activeDeck = 0;
+/*setInterval(
+  () => localStorage.setItem("flashcards-deck", JSON.stringify(decks)),
+  5000,
+);*/
+
+let activeDeck;
 const createCardBut = document.querySelector("#createCardBut");
 createCardBut.addEventListener("click", createCard);
 
@@ -8,7 +14,6 @@ class Deck {
   name;
   cards = [];
   tab = {};
-  nameInputListenerClick;
   constructor(name, tabEl, nameEl, deleteButton) {
     this.name = name;
     this.tab.tabEl = tabEl;
@@ -31,7 +36,7 @@ function createCard() {
     };
     document.querySelector("#leftWindow").value = "";
     document.querySelector("#rightWindow").value = "";
-    decks[activeDeck].cards.push(card);
+    activeDeck.cards.push(card);
 
     createCardBut.innerHTML = "Create card";
     renderDeck();
@@ -40,8 +45,8 @@ function createCard() {
 
 function renderDeck() {
   document.querySelector("table").querySelector("tbody").innerHTML = "";
-  if (decks[activeDeck] !== undefined) {
-    for (let card of decks[activeDeck].cards) {
+  if (activeDeck !== undefined) {
+    for (let card of activeDeck.cards) {
       let tr = document.createElement("tr");
       document.querySelector("table").querySelector("tbody").appendChild(tr);
 
@@ -82,9 +87,7 @@ function renderDeck() {
 }
 
 function deleteCard(cardToDel) {
-  decks[activeDeck].cards = decks[activeDeck].cards.filter(
-    (card) => card !== cardToDel,
-  );
+  activeDeck.cards = activeDeck.cards.filter((card) => card !== cardToDel);
   renderDeck();
 }
 
@@ -96,8 +99,8 @@ function redactCard(cardToRedact) {
 }
 
 function createDeck() {
-  if (decks[activeDeck] !== undefined) {
-    decks[activeDeck].tab.tabEl.style.backgroundColor = "grey";
+  if (activeDeck !== undefined) {
+    activeDeck.tab.tabEl.style.backgroundColor = "grey";
   }
 
   let th = document.createElement("th");
@@ -108,6 +111,7 @@ function createDeck() {
   let nameEl = document.createElement("input");
   tab.style.display = "flex";
   tab.appendChild(nameEl);
+  nameEl.addEventListener("input", () => (deck.name = nameEl.value));
 
   let delButton = document.createElement("button");
   delButton.innerHTML = "x";
@@ -118,43 +122,43 @@ function createDeck() {
   decks.push(deck);
   setActive(deck);
 
-  delButton.addEventListener("click", () => {
+  delButton.addEventListener("click", (e) => {
+    e.stopPropagation();
+
     decks = decks.filter((d) => d !== deck);
     document.querySelector("#nav").removeChild(th);
-    setActive(decks[0]);
-    //решить вопрос при удалении не active колоды
+    if (activeDeck === deck) {
+      setActive(decks[0]);
+    }
+
     renderDeck();
   });
 
   tab.addEventListener("click", () => {
     setActive(deck);
   });
-} //поразвлечься с возможностью переименования
+}
 
 function setActive(deck) {
-  if (decks[activeDeck] !== undefined) {
-    console.log(1);
+  if (activeDeck !== undefined) {
+    activeDeck.tab.tabEl.style.backgroundColor = "grey";
+    activeDeck.tab.tabEl.disabled = false;
+    activeDeck.tab.nameEl.disabled = true;
 
-    decks[activeDeck].tab.tabEl.style.backgroundColor = "grey";
-    decks[activeDeck].tab.tabEl.disabled = false;
-    decks[activeDeck].tab.nameEl.disabled = true;
-    /*decks[activeDeck].tab.nameEl.addEventListener("click", () => {
-      setActive(decks[activeDeck]);
-    });*/
+    activeDeck.tab.nameEl.style.pointerEvents = "none";
   }
   if (deck !== undefined) {
-    console.log(2);
     deck.tab.tabEl.style.backgroundColor = "blue";
     deck.tab.tabEl.disabled = true;
     deck.tab.nameEl.disabled = false;
-    activeDeck = decks.indexOf(deck);
-    console.log(activeDeck);
-  }
+    activeDeck = deck;
 
-  /*deck.tab.nameEl.removeListener("click", () => {
-    setActive(decks[activeDeck]);
-  });*/
+    deck.tab.nameEl.style.pointerEvents = "auto";
+  }
 
   renderDeck();
 }
-//сделать activeDeck ссылкой на колоду
+
+function loadGame() {
+  decks = JSON.parse(localStorage.getItem("flashcards-deck") || "[]");
+}
