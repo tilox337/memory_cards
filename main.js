@@ -7,10 +7,13 @@ createCardBut.addEventListener("click", createCard);
 class Deck {
   name;
   cards = [];
-  tabEl;
-  constructor(name, tabEl) {
+  tab = {};
+  nameInputListenerClick;
+  constructor(name, tabEl, nameEl, deleteButton) {
     this.name = name;
-    this.tabEl = tabEl;
+    this.tab.tabEl = tabEl;
+    this.tab.nameEl = nameEl;
+    this.tab.deleteButton = deleteButton;
   }
 }
 
@@ -94,57 +97,64 @@ function redactCard(cardToRedact) {
 
 function createDeck() {
   if (decks[activeDeck] !== undefined) {
-    decks[activeDeck].tabEl.style.backgroundColor = "grey";
+    decks[activeDeck].tab.tabEl.style.backgroundColor = "grey";
   }
-  activeDeck = decks.length;
 
   let th = document.createElement("th");
+  document.querySelector("#nav").appendChild(th);
   let tab = document.createElement("button");
-
-  let deck = new Deck("New deck", tab);
-  decks.push(deck);
-
-  tab.style.display = "flex";
-  tab.style.backgroundColor = "blue";
-  tab.addEventListener("click", () => {
-    if (activeDeck !== decks.indexOf(deck)) {
-      if (decks[activeDeck] !== undefined) {
-        decks[activeDeck].tabEl.style.backgroundColor = "grey";
-      }
-      activeDeck = decks.indexOf(deck);
-      decks[activeDeck].tabEl.style.backgroundColor = "blue";
-
-      renderDeck();
-    }
-  }); //подумать позже
-  //добавить функцию выбора колоды (можно просто рендерить)
+  th.appendChild(tab);
 
   let nameEl = document.createElement("input");
-  nameEl.value = deck.name;
+  tab.style.display = "flex";
   tab.appendChild(nameEl);
-  //поразвлечься с возможностью переименования
 
   let delButton = document.createElement("button");
   delButton.innerHTML = "x";
   tab.appendChild(delButton);
+
+  let deck = new Deck("New deck", tab, nameEl, delButton);
+  nameEl.value = deck.name;
+  decks.push(deck);
+  setActive(deck);
+
   delButton.addEventListener("click", () => {
     decks = decks.filter((d) => d !== deck);
     document.querySelector("#nav").removeChild(th);
-    activeDeck = 0;
+    setActive(decks[0]);
+    //решить вопрос при удалении не active колоды
+    renderDeck();
   });
 
-  th.appendChild(tab);
-  document.querySelector("#nav").appendChild(th);
-
-  renderDeck();
-}
+  tab.addEventListener("click", () => {
+    setActive(deck);
+  });
+} //поразвлечься с возможностью переименования
 
 function setActive(deck) {
   if (decks[activeDeck] !== undefined) {
-    decks[activeDeck].tabEl.style.backgroundColor = "grey";
+    console.log(1);
+
+    decks[activeDeck].tab.tabEl.style.backgroundColor = "grey";
+    decks[activeDeck].tab.tabEl.disabled = false;
+    decks[activeDeck].tab.nameEl.disabled = true;
+    /*decks[activeDeck].tab.nameEl.addEventListener("click", () => {
+      setActive(decks[activeDeck]);
+    });*/
   }
-  activeDeck = decks.indexOf(deck);
-  decks[activeDeck].tabEl.style.backgroundColor = "blue";
+  if (deck !== undefined) {
+    console.log(2);
+    deck.tab.tabEl.style.backgroundColor = "blue";
+    deck.tab.tabEl.disabled = true;
+    deck.tab.nameEl.disabled = false;
+    activeDeck = decks.indexOf(deck);
+    console.log(activeDeck);
+  }
+
+  /*deck.tab.nameEl.removeListener("click", () => {
+    setActive(decks[activeDeck]);
+  });*/
 
   renderDeck();
-} // написать функцию setActive нормально чтобы становился не кликабельным её tab и изменялось назвение только его
+}
+//сделать activeDeck ссылкой на колоду
