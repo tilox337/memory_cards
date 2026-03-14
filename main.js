@@ -34,11 +34,31 @@ document
   .querySelector("#addButton")
   .addEventListener("click", () => createDeck());
 
+loadGame();
+setInterval(
+  () =>
+    localStorage.setItem(
+      "flashcards-deck",
+      JSON.stringify(
+        decks.map((d) => ({
+          name: d.name,
+          cards: d.cards,
+        })),
+      ),
+    ),
+  5000,
+);
+
 function createCard() {
   if (
     document.querySelector("#leftWindow").value != "" &&
     document.querySelector("#rightWindow").value != ""
   ) {
+    if (!activeDeck || !activeDeck.cards) {
+      alert("Create at least one deck");
+      return;
+    }
+  } else {
     let card = {
       frontSide: document.querySelector("#leftWindow").value,
       backSide: document.querySelector("#rightWindow").value,
@@ -55,7 +75,8 @@ function createCard() {
 
 function renderDeck() {
   document.querySelector("table").querySelector("tbody").innerHTML = "";
-  if (activeDeck !== undefined) {
+
+  if (activeDeck && activeDeck.cards) {
     for (let card of activeDeck.cards) {
       let tr = document.createElement("tr");
       document.querySelector("table").querySelector("tbody").appendChild(tr);
@@ -177,6 +198,8 @@ function setActive(deck) {
     activeDeck = deck;
 
     deck.tab.nameEl.style.pointerEvents = "auto";
+  } else {
+    activeDeck = undefined;
   }
 
   renderDeck();
