@@ -23,6 +23,12 @@ class Deck {
 }
 
 loadGame();
+const remButton = document.querySelector("#remember");
+remButton.addEventListener("click", () => {
+  (localStorage.setItem("flashcards-deck", JSON.stringify(decks)),
+    (window.location.href = "remember.html"));
+  //open("remember.html"),
+});
 
 document
   .querySelector("#addButton")
@@ -110,6 +116,7 @@ function createDeck(loadedDeck = null) {
   let th = document.createElement("th");
   document.querySelector("#nav").appendChild(th);
   let tab = document.createElement("button");
+  tab.style.borderRadius = "5px";
   th.appendChild(tab);
 
   let nameEl = document.createElement("input");
@@ -134,7 +141,7 @@ function createDeck(loadedDeck = null) {
   setActive(deck);
 
   nameEl.addEventListener("input", () => (deck.name = nameEl.value));
-
+  nameEl.style.width = "110px";
   delButton.addEventListener("click", (e) => {
     console.log(3);
     e.stopPropagation();
