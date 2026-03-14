@@ -5,17 +5,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cards</title>
     <style>
+      body {
+        font-family: sans-serif;
+        background-color: #121212;
+        color: #e0e0e0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+        margin: 0;
+      }
+
       .createWindow {
-        text-align: center;
+        all: unset;
+        box-sizing: border-box;
         width: 40%;
-        background-color: green;
-        height: 10em;
+        height: 150px !important;
+        background-color: #1e1e1e;
+        border: 2px solid #333;
+        border-radius: 15px;
+        padding: 20px;
+        color: white;
+        font-size: 1.2rem;
+        text-align: center;
+        transition: border-color 0.3s;
       }
-      #leftWindow {
-        display: flex;
+
+      .createWindow:focus {
+        border-color: #4caf50;
       }
-      #rightWindow {
+
+      #createCardBut {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      #createCardBut:hover {
+        background-color: #45a049;
+      }
+
+      table {
+        margin-top: 30px;
+        border-collapse: collapse;
+        background-color: #1e1e1e;
+        border-radius: 10px;
+        overflow: hidden;
+        border: none !important;
+        width: 90%;
+      }
+
+      tbody tr {
+        border-bottom: 1px solid #333;
+      }
+
+      td {
+        padding: 12px 20px;
+        color: #ccc;
+      }
+
+      th {
+        background-color: #252525;
+        padding: 15px;
+        color: #888;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+      }
+
+      td button {
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        margin: 0 2px;
+      }
+
+      td button:nth-of-type(1) {
+        background-color: #ffa726;
+        color: #000;
+      }
+      td button:nth-of-type(2) {
+        background-color: #ef5350;
+        color: #fff;
+      }
+
+      #remember {
+        margin-top: 40px;
+        background-color: #2196f3;
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+      }
+
+      #nav {
         display: flex;
+        flex-wrap: wrap;
+        border: none;
+      }
+
+      #nav th {
+        display: block;
+        border: none;
+        padding: 5px;
+      }
+
+      table tbody td {
+        width: 33.3%;
+        min-width: 100px;
       }
     </style>
   </head>
@@ -27,11 +133,11 @@
     <div style="display: flex; justify-content: center; margin: 2em">
       <button id="createCardBut">Create card</button>
     </div>
-    <table style="border: 2px solid black; width: 300px">
+    <div id="nav" style="display: flex; align-items: center; width: 70%">
+      <div style="order: 1"><button id="addButton">+</button></div>
+    </div>
+    <table style="border: 2px solid black; width: 70%">
       <thead>
-        <tr id="nav" style="display: flex; align-items: center">
-          <th style="order: 1"><button id="addButton">+</button></th>
-        </tr>
         <tr>
           <th>front side</th>
           <th>back side</th>
@@ -40,6 +146,7 @@
       </thead>
       <tbody></tbody>
     </table>
+    <button id="remember">Go to remember</button>
     <script src="main.js"></script>
   </body>
 </html>
