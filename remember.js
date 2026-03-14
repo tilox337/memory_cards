@@ -85,6 +85,8 @@ function renderCard(card) {
 
   if (!card) {
     div.innerHTML = "This deck is empty";
+    div.disabled = true;
+    div.onclick = null;
     return;
   }
 

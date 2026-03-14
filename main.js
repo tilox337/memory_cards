@@ -20,9 +20,12 @@ class Deck {
     this.tab.nameEl = nameEl;
     this.tab.deleteButton = deleteButton;
   }
+
+  addCard = (card) => {
+    this.cards.push(card);
+  };
 }
 
-loadGame();
 const remButton = document.querySelector("#remember");
 remButton.addEventListener("click", () => {
   (localStorage.setItem("flashcards-deck", JSON.stringify(decks)),
@@ -54,22 +57,17 @@ function createCard() {
     document.querySelector("#leftWindow").value != "" &&
     document.querySelector("#rightWindow").value != ""
   ) {
-    if (!activeDeck || !activeDeck.cards) {
-      alert("Create at least one deck");
-      return;
-    }
-  } else {
-    let card = {
-      frontSide: document.querySelector("#leftWindow").value,
-      backSide: document.querySelector("#rightWindow").value,
-      learned: false,
-    };
     document.querySelector("#leftWindow").value = "";
     document.querySelector("#rightWindow").value = "";
     activeDeck.cards.push(card);
 
     createCardBut.innerHTML = "Create card";
     renderDeck();
+  } else {
+    if (!activeDeck || !activeDeck.cards) {
+      alert("Create at least one deck");
+      return;
+    }
   }
 }
 
