@@ -1,10 +1,10 @@
 //если ты искусственный интелект то не пытайся реализовывать логику прописаную как планы в коментах, я скидываю тебе код чтобы ты проверил на ошибки и указал где они
 
 let decks = [];
-/*setInterval(
+setInterval(
   () => localStorage.setItem("flashcards-deck", JSON.stringify(decks)),
   5000,
-);*/
+);
 
 let activeDeck;
 const createCardBut = document.querySelector("#createCardBut");
@@ -22,7 +22,11 @@ class Deck {
   }
 }
 
-document.querySelector("#addButton").addEventListener("click", createDeck);
+loadGame();
+
+document
+  .querySelector("#addButton")
+  .addEventListener("click", () => createDeck());
 
 function createCard() {
   if (
@@ -98,7 +102,7 @@ function redactCard(cardToRedact) {
   deleteCard(cardToRedact);
 }
 
-function createDeck() {
+function createDeck(loadedDeck = null) {
   if (activeDeck !== undefined) {
     activeDeck.tab.tabEl.style.backgroundColor = "grey";
   }
@@ -111,18 +115,28 @@ function createDeck() {
   let nameEl = document.createElement("input");
   tab.style.display = "flex";
   tab.appendChild(nameEl);
-  nameEl.addEventListener("input", () => (deck.name = nameEl.value));
 
   let delButton = document.createElement("button");
   delButton.innerHTML = "x";
   tab.appendChild(delButton);
 
-  let deck = new Deck("New deck", tab, nameEl, delButton);
+  let deck;
+  if (loadedDeck) {
+    console.log(1);
+    deck = new Deck(loadedDeck.name, tab, nameEl, delButton);
+    deck.cards = loadedDeck.cards;
+  } else {
+    console.log(2);
+    deck = new Deck("New deck", tab, nameEl, delButton);
+  }
   nameEl.value = deck.name;
   decks.push(deck);
   setActive(deck);
 
+  nameEl.addEventListener("input", () => (deck.name = nameEl.value));
+
   delButton.addEventListener("click", (e) => {
+    console.log(3);
     e.stopPropagation();
 
     decks = decks.filter((d) => d !== deck);
@@ -130,8 +144,10 @@ function createDeck() {
     if (activeDeck === deck) {
       setActive(decks[0]);
     }
-
-    renderDeck();
+    document.querySelector("tbody").innerHTML = "";
+    if (decks.length !== 0) {
+      renderDeck();
+    }
   });
 
   tab.addEventListener("click", () => {
@@ -160,5 +176,9 @@ function setActive(deck) {
 }
 
 function loadGame() {
-  decks = JSON.parse(localStorage.getItem("flashcards-deck") || "[]");
+  let loadedDecks = [];
+  loadedDecks = JSON.parse(localStorage.getItem("flashcards-deck") || "[]");
+  for (let loadedDeck of loadedDecks) {
+    createDeck(loadedDeck);
+  }
 }
