@@ -57,6 +57,11 @@ function createCard() {
     document.querySelector("#leftWindow").value != "" &&
     document.querySelector("#rightWindow").value != ""
   ) {
+    let card = {
+      frontSide: document.querySelector("#leftWindow").value,
+      backSide: document.querySelector("#rightWindow").value,
+      learned: false,
+    };
     document.querySelector("#leftWindow").value = "";
     document.querySelector("#rightWindow").value = "";
     activeDeck.cards.push(card);
